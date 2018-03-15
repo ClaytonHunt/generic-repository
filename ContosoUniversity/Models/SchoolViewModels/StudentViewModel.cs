@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ContosoUniversity.Models
+namespace ContosoUniversity.Models.SchoolViewModels
 {
-    public class Student
+    public class StudentViewModel
     {
         public int Id { get; set; }
 
@@ -27,7 +26,5 @@ namespace ContosoUniversity.Models
 
         [Display(Name = "Full Name")] 
         public string FullName => $"{LastName}, {FirstMidName}";
-       
-        public ICollection<Enrollment> Enrollments { get; set; }
     }
 }

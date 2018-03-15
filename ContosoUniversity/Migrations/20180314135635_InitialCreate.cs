@@ -59,7 +59,7 @@ namespace ContosoUniversity.Migrations
                         "FK_Enrollment_Student_StudentID",
                         x => x.StudentID,
                         principalTable: "Student",
-                        principalColumn: "ID",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 

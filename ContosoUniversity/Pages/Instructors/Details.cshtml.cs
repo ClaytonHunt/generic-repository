@@ -1,22 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using ContosoUniversity.Data;
-using ContosoUniversity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using ContosoUniversity.Data;
+using ContosoUniversity.Models;
 
-namespace ContosoUniversity.Pages.Students
+namespace ContosoUniversity.Pages_Instructors
 {
     public class DetailsModel : PageModel
     {
-        private readonly SchoolContext _context;
+        private readonly ContosoUniversity.Data.SchoolContext _context;
 
-        public DetailsModel(SchoolContext context)
+        public DetailsModel(ContosoUniversity.Data.SchoolContext context)
         {
             _context = context;
         }
 
-        public Student Student { get; set; }
+        public Instructor Instructor { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -25,13 +28,9 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await _context.Students
-                .Include(s => s.Enrollments)
-                    .ThenInclude(s => s.Course)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Instructor = await _context.Instructors.SingleOrDefaultAsync(m => m.Id == id);
 
-            if (Student == null)
+            if (Instructor == null)
             {
                 return NotFound();
             }

@@ -63,7 +63,7 @@ namespace ContosoUniversity.Pages.Students
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.ID == id);
+            return _context.Students.Any(e => e.Id == id);
         }
     }
 }

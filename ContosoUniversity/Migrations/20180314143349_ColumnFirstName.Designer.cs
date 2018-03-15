@@ -57,7 +57,7 @@ namespace ContosoUniversity.Migrations
 
             modelBuilder.Entity("ContosoUniversity.Models.Student", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("EnrollmentDate");
@@ -69,7 +69,7 @@ namespace ContosoUniversity.Migrations
                     b.Property<string>("LastName")
                         .HasMaxLength(50);
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("Student");
                 });
