@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ContosoUniversity.Pages.Students;
 
 namespace ContosoUniversity.Models.SchoolViewModels
 {
@@ -26,5 +28,7 @@ namespace ContosoUniversity.Models.SchoolViewModels
 
         [Display(Name = "Full Name")] 
         public string FullName => $"{LastName}, {FirstMidName}";
+
+        public IEnumerable<EnrollmentViewModel> Enrollments { get; set; }
     }
 }

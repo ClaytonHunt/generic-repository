@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
-using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +23,7 @@ namespace ContosoUniversity.Pages.Students
             _context = context;
         }
 
-        public PaginatedList<Student> Student { get; set; }
+        public PaginatedList<StudentViewModel> Student { get; set; }
 
         public async Task OnGetAsync(string sortOrder, string currentFilter, string searchString, int pageIndex = 1)
         {
@@ -42,7 +42,13 @@ namespace ContosoUniversity.Pages.Students
             CurrentFilter = searchString;
 
             var studentIQ = from s in _context.Students
-                            select s;
+                            select new StudentViewModel
+                            {
+                                Id = s.Id,
+                                LastName = s.LastName,
+                                FirstMidName = s.FirstMidName,
+                                EnrollmentDate = s.EnrollmentDate
+                            };
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -68,7 +74,7 @@ namespace ContosoUniversity.Pages.Students
 
             const int pageSize = 3;
 
-            Student = await PaginatedList<Student>.CreateAsync(studentIQ.AsNoTracking(), pageIndex, pageSize);
+            Student = await PaginatedList<StudentViewModel>.CreateAsync(studentIQ.AsNoTracking(), pageIndex, pageSize);
         }
     }
 }

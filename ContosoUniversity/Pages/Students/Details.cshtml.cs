@@ -1,6 +1,7 @@
+using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
-using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace ContosoUniversity.Pages.Students
             _context = context;
         }
 
-        public Student Student { get; set; }
+        public StudentViewModel Student { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -25,10 +26,18 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await _context.Students
-                .Include(s => s.Enrollments)
-                    .ThenInclude(s => s.Course)
-                .AsNoTracking()
+            Student = await _context.Students.Select(s => new StudentViewModel
+                {
+                    Id = s.Id,
+                    FirstMidName = s.FirstMidName,
+                    LastName = s.LastName,
+                    EnrollmentDate = s.EnrollmentDate,
+                    Enrollments = s.Enrollments.Select(e => new EnrollmentViewModel
+                    {
+                        CourseTitle = e.Course.Title,
+                        Grade = e.Grade
+                    })
+                })
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (Student == null)

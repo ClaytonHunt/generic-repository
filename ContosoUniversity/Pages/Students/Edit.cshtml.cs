@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
-using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +18,7 @@ namespace ContosoUniversity.Pages.Students
         }
 
         [BindProperty]
-        public Student Student { get; set; }
+        public StudentViewModel Student { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -27,7 +27,13 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await _context.Students.FindAsync(id);
+            Student = await _context.Students.Select(s => new StudentViewModel
+            {
+                Id = s.Id,
+                FirstMidName = s.FirstMidName,
+                LastName = s.LastName,
+                EnrollmentDate = s.EnrollmentDate
+            }).FirstOrDefaultAsync(s => s.Id == id);
 
             if (Student == null)
             {
@@ -59,11 +65,6 @@ namespace ContosoUniversity.Pages.Students
             
             return RedirectToPage("./Index");
 
-        }
-
-        private bool StudentExists(int id)
-        {
-            return _context.Students.Any(e => e.Id == id);
         }
     }
 }

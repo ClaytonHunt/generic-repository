@@ -1,6 +1,7 @@
+using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
-using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace ContosoUniversity.Pages.Students
         }
 
         [BindProperty]
-        public Student Student { get; set; }
+        public StudentViewModel Student { get; set; }
         public string ErrorMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id, bool saveChangesError = false)
@@ -27,7 +28,13 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+            Student = await _context.Students.Select(s => new StudentViewModel
+            {
+                Id = s.Id,
+                FirstMidName = s.FirstMidName,
+                LastName = s.LastName,
+                EnrollmentDate = s.EnrollmentDate
+            }).FirstOrDefaultAsync(m => m.Id == id);
 
             if (Student == null)
             {
@@ -42,13 +49,8 @@ namespace ContosoUniversity.Pages.Students
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var student = await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
