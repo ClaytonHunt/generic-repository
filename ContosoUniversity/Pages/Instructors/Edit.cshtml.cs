@@ -1,5 +1,6 @@
+using System.Linq;
 using System.Threading.Tasks;
-using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace ContosoUniversity.Pages.Instructors
         }
 
         [BindProperty]
-        public Instructor Instructor { get; set; }
+        public InstructorViewModel Instructor { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -26,10 +27,31 @@ namespace ContosoUniversity.Pages.Instructors
             }
 
             Instructor = await _context.Instructors
-                .Include(i => i.OfficeAssignment)
-                .Include(i => i.CourseAssignments)
-                    .ThenInclude(i => i.Course)
-                .AsNoTracking()
+                    .Select(i => new InstructorViewModel
+                    {
+                        Id = i.Id,
+                        FirstMidName = i.FirstMidName,
+                        LastName = i.LastName,
+                        HireDate = i.HireDate,
+                        OfficeAssignment = new OfficeAssignmentViewModel
+                        {
+                            Location = i.OfficeAssignment.Location
+                        },
+                        CourseAssignments = i.CourseAssignments.Select(ca => new CourseAssignmentViewModel
+                        {
+                            Course = new CourseViewModel
+                            {
+                                CourseId = ca.Course.CourseId,
+                                Title = ca.Course.Title,
+                                Enrollments = ca.Course.Enrollments.Select(e => new EnrollmentViewModel
+                                {
+                                    Grade = e.Grade,
+                                    CourseTitle = e.Course.Title,
+                                    StudentName = e.Student.FullName
+                                })
+                            }
+                        })
+                    })
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (Instructor == null)
@@ -49,10 +71,32 @@ namespace ContosoUniversity.Pages.Instructors
                 return Page();
             }
 
-            var instructorToUpdate = await _context.Instructors
-                .Include(i => i.OfficeAssignment)
-                .Include(i => i.CourseAssignments)
-                    .ThenInclude(i => i.Course)
+            var instructorToUpdate = await _context.Instructors.Select(i => new InstructorViewModel
+            {
+                Id = i.Id,
+                FirstMidName = i.FirstMidName,
+                LastName = i.LastName,
+                HireDate = i.HireDate,
+                OfficeAssignment = new OfficeAssignmentViewModel
+                {
+                    Location = i.OfficeAssignment.Location
+                },
+                CourseAssignments = i.CourseAssignments.Select(ca => new CourseAssignmentViewModel
+                {
+                    Course = new CourseViewModel
+                    {
+                        CourseId = ca.Course.CourseId,
+                        Title = ca.Course.Title,
+                        Enrollments = ca.Course.Enrollments.Select(e => new EnrollmentViewModel
+                        {
+                            Grade = e.Grade,
+                            CourseTitle = e.Course.Title,
+                            StudentName = e.Student.FullName
+                        })
+                    }
+
+                })
+            })
                 .FirstOrDefaultAsync(i => i.Id == id);
 
             if (await TryUpdateModelAsync(

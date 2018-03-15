@@ -1,4 +1,3 @@
-using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -22,24 +21,36 @@ namespace ContosoUniversity.Pages.Instructors
 
         public async Task OnGetAsync(int? id, int? courseId)
         {
-            Instructor = new InstructorIndexData();
-            Instructor.Instructors = await _context.Instructors
-                .Include(i => i.OfficeAssignment)
-                .Include(i => i.CourseAssignments)
-                    .ThenInclude(i => i.Course)
-                        .ThenInclude(i => i.Department)
-//                    .Include(i => i.CourseAssignments)
-//                        .ThenInclude(i => i.Course)
-//                            .ThenInclude(i => i.Enrollments)
-//                                .ThenInclude(i => i.Student)
-//                .AsNoTracking()
-                .OrderBy(i => i.LastName)
-                .ToListAsync();
+            Instructor = new InstructorIndexData
+            {
+                Instructors = await _context.Instructors.Select(i => new InstructorViewModel
+                    {
+                        Id = i.Id,
+                        FirstMidName = i.FirstMidName,
+                        LastName = i.LastName,
+                        HireDate = i.HireDate,
+                        OfficeAssignment = new OfficeAssignmentViewModel { },
+                        CourseAssignments = i.CourseAssignments.Select(ca => new CourseAssignmentViewModel
+                        {
+                            Course = new CourseViewModel
+                            {
+                                CourseId = ca.Course.CourseId,
+                                Title = ca.Course.Title,
+                                Credits = ca.Course.Credits,
+                                DepartmentName = ca.Course.Department.Name
+                            }
+                        })
+                    })
+                    .OrderBy(i => i.LastName)
+                    .ToListAsync()
+            };
 
             if (id != null)
             {
                 InstructorId = id.Value;
-                Instructor instructor = Instructor.Instructors.Single(i => i.Id == id.Value);
+
+                var instructor = Instructor.Instructors.Single(i => i.Id == id.Value);
+
                 Instructor.Courses = instructor.CourseAssignments.Select(s => s.Course);
             }
 
@@ -47,12 +58,14 @@ namespace ContosoUniversity.Pages.Instructors
             {
                 CourseId = courseId.Value;
                 var selectedCourse = Instructor.Courses.Single(x => x.CourseId == courseId);
-                await _context.Entry(selectedCourse).Collection(x => x.Enrollments).LoadAsync();
 
-                foreach (var enrollment in selectedCourse.Enrollments)
-                {
-                    await _context.Entry(enrollment).Reference(x => x.Student).LoadAsync();
-                }
+                selectedCourse.Enrollments = await _context.Enrollments
+                    .Where(e => e.CourseId == selectedCourse.CourseId)
+                    .Select(e => new EnrollmentViewModel
+                    {
+                        StudentName = e.Student.FullName,
+                        Grade = e.Grade
+                    }).ToListAsync();
 
                 Instructor.Enrollments = selectedCourse.Enrollments;
             }

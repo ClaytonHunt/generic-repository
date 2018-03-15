@@ -1,5 +1,4 @@
 ﻿using ContosoUniversity.Data;
-using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
@@ -13,11 +12,11 @@ namespace ContosoUniversity.Pages.Instructors
         public List<AssignedCourseData> AssignedCourseDataList;
 
         public void PopulateAssignedCourseData(SchoolContext context,
-                                               Instructor instructor)
+                                               InstructorViewModel instructor)
         {
             var allCourses = context.Courses;
             var instructorCourses = new HashSet<int>(
-                instructor.CourseAssignments.Select(c => c.CourseId));
+                instructor.CourseAssignments.Select(c => c.Course.CourseId));
             AssignedCourseDataList = new List<AssignedCourseData>();
             foreach (var course in allCourses)
             {
@@ -31,39 +30,53 @@ namespace ContosoUniversity.Pages.Instructors
         }
 
         public void UpdateInstructorCourses(SchoolContext context,
-            string[] selectedCourses, Instructor instructorToUpdate)
+            string[] selectedCourses, InstructorViewModel instructorToUpdate)
         {
             if (selectedCourses == null)
             {
-                instructorToUpdate.CourseAssignments = new List<CourseAssignment>();
+                instructorToUpdate.CourseAssignments = new List<CourseAssignmentViewModel>();
                 return;
             }
 
             var selectedCoursesHS = new HashSet<string>(selectedCourses);
             var instructorCourses = new HashSet<int>
                 (instructorToUpdate.CourseAssignments.Select(c => c.Course.CourseId));
-            foreach (var course in context.Courses)
+
+            foreach (var course in context.Courses.Select(c => new CourseViewModel
+            {
+                CourseId = c.CourseId,
+                Title = c.Title,
+                Enrollments = c.Enrollments.Select(e => new EnrollmentViewModel
+                {
+                    Grade = e.Grade,
+                    StudentName = e.Student.FullName,
+                    CourseTitle = e.Course.Title
+                }),
+                Credits = c.Credits,
+                DepartmentName = c.Department.Name
+            }))
             {
                 if (selectedCoursesHS.Contains(course.CourseId.ToString()))
                 {
                     if (!instructorCourses.Contains(course.CourseId))
                     {
-                        instructorToUpdate.CourseAssignments.Add(
-                            new CourseAssignment
-                            {
-                                InstructorId = instructorToUpdate.Id,
-                                CourseId = course.CourseId
-                            });
+                        instructorToUpdate.CourseAssignments = instructorToUpdate.CourseAssignments.ToList();
+                        ((IList<CourseAssignmentViewModel>)instructorToUpdate.CourseAssignments).Add(new CourseAssignmentViewModel
+                        {
+                            Instructor = instructorToUpdate,
+                            Course = course
+                        });
                     }
                 }
                 else
                 {
                     if (instructorCourses.Contains(course.CourseId))
                     {
-                        CourseAssignment courseToRemove
+                        var courseToRemove
                             = instructorToUpdate
                                 .CourseAssignments
-                                .SingleOrDefault(i => i.CourseId == course.CourseId);
+                                .SingleOrDefault(i => i.Course.CourseId == course.CourseId);
+
                         context.Remove(courseToRemove);
                     }
                 }

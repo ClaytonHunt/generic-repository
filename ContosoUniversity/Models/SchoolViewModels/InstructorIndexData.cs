@@ -7,8 +7,8 @@ namespace ContosoUniversity.Models.SchoolViewModels
 {
     public class InstructorIndexData
     {
-        public IEnumerable<Instructor> Instructors { get; set; }
-        public IEnumerable<Course> Courses { get; set; }
-        public IEnumerable<Enrollment> Enrollments { get; set; }
+        public IEnumerable<InstructorViewModel> Instructors { get; set; }
+        public IEnumerable<CourseViewModel> Courses { get; set; }
+        public IEnumerable<EnrollmentViewModel> Enrollments { get; set; }
     }
 }

@@ -4,5 +4,6 @@ namespace ContosoUniversity.Models.SchoolViewModels
     {
         public string CourseTitle { get; set; }
         public Grade? Grade { get; set; }
+        public string StudentName { get; set; }
     }
 }
