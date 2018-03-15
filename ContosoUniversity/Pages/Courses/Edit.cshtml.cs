@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ContosoUniversity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ContosoUniversity.Data;
-using ContosoUniversity.Models;
 
-namespace ContosoUniversity.Pages_Courses
+namespace ContosoUniversity.Pages.Courses
 {
-    public class EditModel : PageModel
+    public class EditModel : DepartmentNamePageModel
     {
         private readonly ContosoUniversity.Data.SchoolContext _context;
 
@@ -31,42 +28,44 @@ namespace ContosoUniversity.Pages_Courses
             }
 
             Course = await _context.Courses
-                .Include(c => c.Department).SingleOrDefaultAsync(m => m.CourseId == id);
+                .Include(c => c.Department).FirstOrDefaultAsync(m => m.CourseId == id);
 
             if (Course == null)
             {
                 return NotFound();
             }
-           ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "DepartmentId");
+
+            // Select current DepartmentId
+            PopulateDepartmentsDropDownList(_context, Course.DepartmentId);
+
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Attach(Course).State = EntityState.Modified;
+            var courseToUpdate = await _context.Courses.FindAsync(id);
 
-            try
+            if (await TryUpdateModelAsync(
+                courseToUpdate,
+                "course",
+                c => c.Credits,
+                c => c.DepartmentId,
+                c => c.Title))
             {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CourseExists(Course.CourseId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+
+                return RedirectToPage("./Index");
             }
 
-            return RedirectToPage("./Index");
+            // Select DepartmentId if TryUpdateModelAsync fails
+            PopulateDepartmentsDropDownList(_context, courseToUpdate.DepartmentId);
+
+            return Page();
         }
 
         private bool CourseExists(int id)

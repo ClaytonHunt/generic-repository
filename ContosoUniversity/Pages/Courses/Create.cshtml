@@ -1,5 +1,5 @@
 @page
-@model ContosoUniversity.Pages_Courses.CreateModel
+@model ContosoUniversity.Pages.Courses.CreateModel
 
 @{
     ViewData["Title"] = "Create";
@@ -29,8 +29,13 @@
                 <span asp-validation-for="Course.Credits" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Course.DepartmentId" class="control-label"></label>
-                <select asp-for="Course.DepartmentId" class ="form-control" asp-items="ViewBag.DepartmentId"></select>
+                <label asp-for="Course.Department" class="control-label"></label>
+                <select asp-for="Course.DepartmentId" 
+                        class="form-control"
+                        asp-items="@Model.DepartmentName">
+                    <option value="">-- Select Department --</option>
+                </select>
+                <span asp-validation-for="Course.DepartmentId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-default" />

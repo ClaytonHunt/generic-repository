@@ -1,5 +1,5 @@
 @page
-@model ContosoUniversity.Pages_Courses.DeleteModel
+@model ContosoUniversity.Pages.Courses.DeleteModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -12,6 +12,12 @@
     <h4>Course</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Course.CourseId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Course.CourseId)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Course.Title)
         </dt>
@@ -28,7 +34,7 @@
             @Html.DisplayNameFor(model => model.Course.Department)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Course.Department.DepartmentId)
+            @Html.DisplayFor(model => model.Course.Department.Name)
         </dd>
     </dl>
     

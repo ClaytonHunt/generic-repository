@@ -1,5 +1,5 @@
 @page
-@model ContosoUniversity.Pages_Courses.IndexModel
+@model ContosoUniversity.Pages.Courses.IndexModel
 
 @{
     ViewData["Title"] = "Index";
@@ -29,64 +29,27 @@
     </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.CourseVm)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CourseId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Credits)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DepartmentName)
-                </td>
-                <td>
-                    <a asp-page="./Edit" asp-route-id="@item.CourseId">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.CourseId">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.CourseId">Delete</a>
-                </td>
-            </tr>
-        }
+    @foreach (var item in Model.CourseVm)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Credits)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartmentName)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.CourseId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.CourseId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.CourseId">Delete</a>
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
-
-@if (Model.Instructor.Courses != null)
-{
-    <h3>Courses Taught by Selected Instructor</h3>
-    <table class="table">
-        <tr>
-            <th></th>
-            <th>Number</th>
-            <th>Title</th>
-            <th>Department</th>
-        </tr>
-
-        @foreach (var item in Model.Instructor.Courses)
-        {
-            string selectedRow = "";
-            if (item.CourseID == Model.CourseID)
-            {
-                selectedRow = "success";
-            }
-            <tr class="@selectedRow">
-                <td>
-                    @Html.ActionLink("Select", "OnGetAsync", 
-                        new { courseID = item.CourseID })
-                </td>
-                <td>
-                    @item.CourseID
-                </td>
-                <td>
-                    @item.Title
-                </td>  <td>
-                    @item.Department.Name
-                </td>
-            </tr>
-        }
-
-    </table>
-}

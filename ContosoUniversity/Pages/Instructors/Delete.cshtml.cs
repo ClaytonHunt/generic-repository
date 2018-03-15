@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ContosoUniversity.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using ContosoUniversity.Data;
-using ContosoUniversity.Models;
 
-namespace ContosoUniversity.Pages_Instructors
+namespace ContosoUniversity.Pages.Instructors
 {
     public class DeleteModel : PageModel
     {
@@ -38,20 +35,21 @@ namespace ContosoUniversity.Pages_Instructors
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            Instructor instructor = await _context.Instructors
+                .Include(i => i.CourseAssignments)
+                .SingleAsync(i => i.Id == id);
 
-            Instructor = await _context.Instructors.FindAsync(id);
+            var departments = await _context.Departments
+                .Where(d => d.InstructorId == id)
+                .ToListAsync();
 
-            if (Instructor != null)
-            {
-                _context.Instructors.Remove(Instructor);
-                await _context.SaveChangesAsync();
-            }
+            departments.ForEach(d => d.InstructorId = null);
+
+            _context.Instructors.Remove(instructor);
+
+            await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
         }
