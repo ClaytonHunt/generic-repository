@@ -23,29 +23,40 @@ namespace ContosoUniversity.Pages.Instructors
         {
             Instructor = new InstructorIndexData
             {
-                Instructors = await new InstructorMapper().ManyTo(_context.Instructors)
+                Instructors = await new InstructorService(_context).GetAll()
                     .OrderBy(i => i.LastName)
                     .ToListAsync()
             };
 
             if (id != null)
             {
-                InstructorId = id.Value;
-
-                var instructor = Instructor.Instructors.Single(i => i.Id == id.Value);
-
-                Instructor.Courses = instructor.CourseAssignments.Select(s => s.Course);
+                SelectInstructor(id);
             }
 
             if (courseId != null)
             {
-                CourseId = courseId.Value;
-                var selectedCourse = Instructor.Courses.Single(x => x.CourseId == courseId);
-
-                selectedCourse.Enrollments = await new EnrollmentMapper().ManyTo(_context.Enrollments.Where(e => e.CourseId == selectedCourse.CourseId)).ToListAsync();
-
-                Instructor.Enrollments = selectedCourse.Enrollments;
+                await SelectCourse(courseId.Value);
             }
+        }
+
+        private async Task SelectCourse(int courseId)
+        {
+            CourseId = courseId;
+
+            var selectedCourse = Instructor.Courses.Single(x => x.CourseId == courseId);
+
+            selectedCourse.Enrollments = await new EnrollmentService(_context).GetAllAsync(e => e.Where(x => x.CourseTitle == selectedCourse.Title));
+
+            Instructor.Enrollments = selectedCourse.Enrollments;
+        }
+
+        private void SelectInstructor(int? id)
+        {
+            InstructorId = id.Value;
+
+            var instructor = Instructor.Instructors.Single(i => i.Id == id.Value);
+
+            Instructor.Courses = instructor.CourseAssignments.Select(s => s.Course);
         }
     }
 }

@@ -1,9 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.Pages.Students
 {
@@ -27,7 +27,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = new StudentMapper().SingleTo(await _context.Students.FirstOrDefaultAsync(m => m.Id == id));
+            Student = await new StudentService(_context).GetByIdAsync(id.Value);
 
             if (Student == null)
             {
@@ -44,7 +44,7 @@ namespace ContosoUniversity.Pages.Students
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            var student = new StudentMapper().SingleTo(await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id));
+            var student = await new StudentService(_context).GetByIdAsync(id);
 
             if (student == null)
             {
@@ -53,12 +53,11 @@ namespace ContosoUniversity.Pages.Students
 
             try
             {
-                _context.Students.Remove(new StudentMapper().SingleFrom(student));
-                await _context.SaveChangesAsync();
+                await new StudentService(_context).DeleteAsync(student);
 
                 return RedirectToPage("./Index");
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
                 // Log the error (uncomment ex variable name and write a log.
                 return RedirectToAction("./Delete", new { id, saveChangesError = true });

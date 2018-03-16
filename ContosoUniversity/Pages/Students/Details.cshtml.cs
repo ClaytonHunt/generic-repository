@@ -3,7 +3,6 @@ using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.Pages.Students
 {
@@ -25,12 +24,13 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await new StudentMapper().ManyTo(_context.Students).FirstOrDefaultAsync(m => m.Id == id);
+            Student = await new StudentService(_context).GetByIdAsync(id.Value);
 
             if (Student == null)
             {
                 return NotFound();
             }
+
             return Page();
         }
     }

@@ -30,8 +30,7 @@ namespace ContosoUniversity.Pages.Students
                 return Page();
             }
 
-            _context.Add(new StudentMapper().SingleFrom(Student));
-            await _context.SaveChangesAsync();
+            await new StudentService(_context).CreateAsync(Student);
 
             return RedirectToPage("./Index");
         }

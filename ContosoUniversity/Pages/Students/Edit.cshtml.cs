@@ -3,7 +3,6 @@ using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.Pages.Students
 {
@@ -26,7 +25,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = new StudentMapper().SingleTo(await _context.Students.FirstOrDefaultAsync(s => s.Id == id));
+            Student = await new StudentService(_context).GetByIdAsync(id.Value);
 
             if (Student == null)
             {
@@ -43,12 +42,9 @@ namespace ContosoUniversity.Pages.Students
                 return Page();
             }
 
-            _context.Students.Update(new StudentMapper().SingleFrom(Student));
-
-            await _context.SaveChangesAsync();
+            await new StudentService(_context).UpdateAsync(Student);
             
             return RedirectToPage("./Index");
-
         }
     }
 }

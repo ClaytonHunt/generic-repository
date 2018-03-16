@@ -28,7 +28,7 @@ namespace ContosoUniversity.Pages.Instructors
             }
         }
 
-        public void UpdateInstructorCourses(IQueryable<CourseViewModel> allCourses,
+        public void UpdateInstructorCourses(IEnumerable<CourseViewModel> allCourses,
             string[] selectedCourses, InstructorViewModel instructorToUpdate)
         {
             if (selectedCourses == null)

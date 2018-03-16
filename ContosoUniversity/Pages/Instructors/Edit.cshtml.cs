@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,14 +28,14 @@ namespace ContosoUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            Instructor = await new InstructorMapper().ManyTo(_context.Instructors).FirstOrDefaultAsync(m => m.Id == id);
+            Instructor = await new InstructorService(_context).GetByIdAsync(id.Value);
 
             if (Instructor == null)
             {
                 return NotFound();
             }
 
-            var allCourses = new CourseMapper().ManyTo(_context.Courses);
+            var allCourses = new CourseService(_context).GetAllAsync();
 
             PopulateAssignedCourseData(allCourses, Instructor);
 
@@ -67,6 +70,21 @@ namespace ContosoUniversity.Pages.Instructors
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
+        }
+    }
+
+    public class CourseService
+    {
+        private readonly SchoolContext _context;
+
+        public CourseService(SchoolContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<CourseViewModel>> GetAllAsync()
+        {
+            return await new CourseMapper().ManyTo(_context.Courses).ToListAsync();
         }
     }
 }

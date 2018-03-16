@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
@@ -39,34 +38,35 @@ namespace ContosoUniversity.Pages.Students
             DateSort = sortOrder == "Date" ? "date_desc" : "Date";
             CurrentSort = sortOrder;
             CurrentFilter = searchString;
-
-            var studentIQ = new StudentMapper().ManyTo(_context.Students);
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                studentIQ = studentIQ.Where(s =>
-                    s.LastName.Contains(searchString) || s.FirstMidName.Contains(searchString));
-            }
-
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    studentIQ = studentIQ.OrderByDescending(s => s.LastName);
-                    break;
-                case "Date":
-                    studentIQ = studentIQ.OrderBy(s => s.EnrollmentDate);
-                    break;
-                case "date_desc":
-                    studentIQ = studentIQ.OrderByDescending(s => s.EnrollmentDate);
-                    break;
-                default:
-                    studentIQ = studentIQ.OrderBy(s => s.LastName);
-                    break;
-            }
-
             const int pageSize = 3;
 
-            Student = await PaginatedList<StudentViewModel>.CreateAsync(studentIQ, pageIndex, pageSize);
+
+            Student = await new StudentService(_context).GetAllPagedAsync(
+                searchString, OrderedBy(sortOrder), pageIndex, pageSize);
+        }
+
+        private Func<IQueryable<StudentViewModel>, IQueryable<StudentViewModel>> OrderedBy(string sortOrder)
+        {
+            return students =>
+            {
+                switch (sortOrder)
+                {
+                    case "name_desc":
+                        students = students.OrderByDescending(s => s.LastName);
+                        break;
+                    case "Date":
+                        students = students.OrderBy(s => s.EnrollmentDate);
+                        break;
+                    case "date_desc":
+                        students = students.OrderByDescending(s => s.EnrollmentDate);
+                        break;
+                    default:
+                        students = students.OrderBy(s => s.LastName);
+                        break;
+                }
+
+                return students;
+            };
         }
     }
 }
