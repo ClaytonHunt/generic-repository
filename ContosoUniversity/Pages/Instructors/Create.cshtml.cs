@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -24,10 +23,12 @@ namespace ContosoUniversity.Pages.Instructors
                 CourseAssignments = new List<CourseAssignmentViewModel>()
             };
 
+            var allCourses = new CourseMapper().ManyTo(_context.Courses);
+
             // Provides an empty collection for the foreach loop
             // foreach (var course in Model.AssignedCourseDataList)
             // in the Create Razor page.
-            PopulateAssignedCourseData(_context, instructor);
+            PopulateAssignedCourseData(allCourses, instructor);
 
             return Page();
         }
@@ -60,32 +61,11 @@ namespace ContosoUniversity.Pages.Instructors
                 }
             }
 
-            if (await TryUpdateModelAsync(
-                newInstructor,
-                "Instructor",
-                i => i.FirstMidName,
-                i => i.LastName,
-                i => i.HireDate,
-                i => i.OfficeAssignment))
-            {
-                _context.Instructors.Add(new Instructor()
-                {
-                    FirstMidName = newInstructor.FirstMidName,
-                    LastName = newInstructor.LastName,
-                    HireDate = newInstructor.HireDate,
-                    OfficeAssignment = newInstructor.OfficeAssignment?.Location == null ? null : new OfficeAssignment
-                    {
-                        Location = newInstructor.OfficeAssignment.Location
-                    }
-                });
-                await _context.SaveChangesAsync();
+            _context.Instructors.Add(new InstructorMapper().SingleFrom(Instructor));
 
-                return RedirectToPage("./Index");
-            }
+            await _context.SaveChangesAsync();
 
-            PopulateAssignedCourseData(_context, newInstructor);
-
-            return Page();
+            return RedirectToPage("./Index");
         }
     }
 }

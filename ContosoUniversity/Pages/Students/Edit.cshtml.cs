@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
@@ -27,13 +26,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await _context.Students.Select(s => new StudentViewModel
-            {
-                Id = s.Id,
-                FirstMidName = s.FirstMidName,
-                LastName = s.LastName,
-                EnrollmentDate = s.EnrollmentDate
-            }).FirstOrDefaultAsync(s => s.Id == id);
+            Student = new StudentMapper().SingleTo(await _context.Students.FirstOrDefaultAsync(s => s.Id == id));
 
             if (Student == null)
             {
@@ -50,16 +43,7 @@ namespace ContosoUniversity.Pages.Students
                 return Page();
             }
 
-            var studentToUpdate = await _context.Students.FindAsync(id);
-
-            if (!await TryUpdateModelAsync(studentToUpdate,
-                "student",
-                s => s.FirstMidName,
-                s => s.LastName,
-                s => s.EnrollmentDate))
-            {
-                return Page();
-            }
+            _context.Students.Update(new StudentMapper().SingleFrom(Student));
 
             await _context.SaveChangesAsync();
             

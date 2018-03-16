@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
-using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -31,14 +30,7 @@ namespace ContosoUniversity.Pages.Students
                 return Page();
             }
 
-            var studentToCreate = new Student
-            {
-                FirstMidName = Student.FirstMidName,
-                LastName = Student.LastName,
-                EnrollmentDate = Student.EnrollmentDate
-            };
-
-            _context.Add(studentToCreate);
+            _context.Add(new StudentMapper().SingleFrom(Student));
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

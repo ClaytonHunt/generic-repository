@@ -23,27 +23,7 @@ namespace ContosoUniversity.Pages.Instructors
         {
             Instructor = new InstructorIndexData
             {
-                Instructors = await _context.Instructors.Select(i => new InstructorViewModel
-                    {
-                        Id = i.Id,
-                        FirstMidName = i.FirstMidName,
-                        LastName = i.LastName,
-                        HireDate = i.HireDate,
-                        OfficeAssignment = new OfficeAssignmentViewModel { },
-                        CourseAssignments = i.CourseAssignments.Select(ca => new CourseAssignmentViewModel
-                        {
-                            Course = new CourseViewModel
-                            {
-                                CourseId = ca.Course.CourseId,
-                                Title = ca.Course.Title,
-                                Credits = ca.Course.Credits,
-                                Department = new DepartmentViewModel
-                                {
-                                    Name = ca.Course.Department.Name
-                                },
-                            }
-                        })
-                    })
+                Instructors = await new InstructorMapper().ManyTo(_context.Instructors)
                     .OrderBy(i => i.LastName)
                     .ToListAsync()
             };
@@ -62,13 +42,7 @@ namespace ContosoUniversity.Pages.Instructors
                 CourseId = courseId.Value;
                 var selectedCourse = Instructor.Courses.Single(x => x.CourseId == courseId);
 
-                selectedCourse.Enrollments = await _context.Enrollments
-                    .Where(e => e.CourseId == selectedCourse.CourseId)
-                    .Select(e => new EnrollmentViewModel
-                    {
-                        StudentName = e.Student.FullName,
-                        Grade = e.Grade
-                    }).ToListAsync();
+                selectedCourse.Enrollments = await new EnrollmentMapper().ManyTo(_context.Enrollments.Where(e => e.CourseId == selectedCourse.CourseId)).ToListAsync();
 
                 Instructor.Enrollments = selectedCourse.Enrollments;
             }

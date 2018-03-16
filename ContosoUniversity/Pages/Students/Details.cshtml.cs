@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
@@ -26,19 +25,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await _context.Students.Select(s => new StudentViewModel
-                {
-                    Id = s.Id,
-                    FirstMidName = s.FirstMidName,
-                    LastName = s.LastName,
-                    EnrollmentDate = s.EnrollmentDate,
-                    Enrollments = s.Enrollments.Select(e => new EnrollmentViewModel
-                    {
-                        CourseTitle = e.Course.Title,
-                        Grade = e.Grade
-                    })
-                })
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Student = await new StudentMapper().ManyTo(_context.Students).FirstOrDefaultAsync(m => m.Id == id);
 
             if (Student == null)
             {

@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -28,40 +25,16 @@ namespace ContosoUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            Instructor = await _context.Instructors
-                    .Select(i => new InstructorViewModel
-                    {
-                        Id = i.Id,
-                        FirstMidName = i.FirstMidName,
-                        LastName = i.LastName,
-                        HireDate = i.HireDate,
-                        OfficeAssignment = new OfficeAssignmentViewModel
-                        {
-                            Location = i.OfficeAssignment.Location
-                        },
-                        CourseAssignments = i.CourseAssignments.Select(ca => new CourseAssignmentViewModel
-                        {
-                            Course = new CourseViewModel
-                            {
-                                CourseId = ca.Course.CourseId,
-                                Title = ca.Course.Title,
-                                Enrollments = ca.Course.Enrollments.Select(e => new EnrollmentViewModel
-                                {
-                                    Grade = e.Grade,
-                                    CourseTitle = e.Course.Title,
-                                    StudentName = e.Student.FullName
-                                })
-                            }
-                        })
-                    })
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Instructor = await new InstructorMapper().ManyTo(_context.Instructors).FirstOrDefaultAsync(m => m.Id == id);
 
             if (Instructor == null)
             {
                 return NotFound();
             }
 
-            PopulateAssignedCourseData(_context, Instructor);
+            var allCourses = new CourseMapper().ManyTo(_context.Courses);
+
+            PopulateAssignedCourseData(allCourses, Instructor);
 
             return Page();
         }
@@ -73,25 +46,23 @@ namespace ContosoUniversity.Pages.Instructors
                 return Page();
             }
 
-            var instructorToUpdate = await _context.Instructors
-                .Include(i => i.OfficeAssignment)
-                .Include(i => i.CourseAssignments)
-                .FirstOrDefaultAsync(i => i.Id == id);           
+            var instructorToUpdate = await new InstructorMapper().ManyTo(_context.Instructors).FirstOrDefaultAsync(i => i.Id == id);           
 
             if (string.IsNullOrWhiteSpace(instructorToUpdate.OfficeAssignment?.Location))
             {
                 instructorToUpdate.OfficeAssignment = null;
             }
 
-            UpdateInstructorCourses(_context, selectedCourses, instructorToUpdate);
+            var allCourses = new CourseMapper().ManyTo(_context.Courses);
+
+            UpdateInstructorCourses(allCourses, selectedCourses, instructorToUpdate);
+
             instructorToUpdate.LastName = Instructor.LastName;
             instructorToUpdate.FirstMidName = Instructor.FirstMidName;
             instructorToUpdate.HireDate = Instructor.HireDate;
-            instructorToUpdate.OfficeAssignment = string.IsNullOrWhiteSpace(Instructor.OfficeAssignment.Location) ? null : new OfficeAssignment
-            {
-                InstructorId = instructorToUpdate.Id,
-                Location = Instructor.OfficeAssignment.Location
-            } ;
+            instructorToUpdate.OfficeAssignment = string.IsNullOrWhiteSpace(Instructor.OfficeAssignment.Location) ? null : Instructor.OfficeAssignment;
+
+            _context.Instructors.Update(new InstructorMapper().SingleFrom(instructorToUpdate));
 
             await _context.SaveChangesAsync();
 
