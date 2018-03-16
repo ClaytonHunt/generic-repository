@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContosoUniversity.Models.SchoolViewModels
 {
@@ -13,5 +12,8 @@ namespace ContosoUniversity.Models.SchoolViewModels
         public string FirstMidName { get; set; }
         public OfficeAssignmentViewModel OfficeAssignment { get; set; }
         public IEnumerable<CourseAssignmentViewModel> CourseAssignments { get; set; }
+
+        [Display(Name = "Full Name")]
+        public string FullName => $"{FirstMidName} {LastName}";
     }
 }

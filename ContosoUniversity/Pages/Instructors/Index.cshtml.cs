@@ -37,7 +37,10 @@ namespace ContosoUniversity.Pages.Instructors
                                 CourseId = ca.Course.CourseId,
                                 Title = ca.Course.Title,
                                 Credits = ca.Course.Credits,
-                                DepartmentName = ca.Course.Department.Name
+                                Department = new DepartmentViewModel
+                                {
+                                    Name = ca.Course.Department.Name
+                                },
                             }
                         })
                     })

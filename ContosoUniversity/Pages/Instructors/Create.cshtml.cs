@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -17,9 +19,9 @@ namespace ContosoUniversity.Pages.Instructors
 
         public IActionResult OnGet()
         {
-            var instructor = new Instructor
+            var instructor = new InstructorViewModel
             {
-                CourseAssignments = new List<CourseAssignment>()
+                CourseAssignments = new List<CourseAssignmentViewModel>()
             };
 
             // Provides an empty collection for the foreach loop
@@ -31,7 +33,7 @@ namespace ContosoUniversity.Pages.Instructors
         }
 
         [BindProperty]
-        public Instructor Instructor { get; set; }
+        public InstructorViewModel Instructor { get; set; }
 
         public async Task<IActionResult> OnPostAsync(string[] selectedCourses)
         {
@@ -40,18 +42,21 @@ namespace ContosoUniversity.Pages.Instructors
                 return Page();
             }
 
-            var newInstructor = new Instructor();
+            var newInstructor = new InstructorViewModel();
 
             if (selectedCourses != null)
             {
                 foreach (var course in selectedCourses)
                 {
-                    var courseToAdd = new CourseAssignment
+                    var courseToAdd = new CourseAssignmentViewModel
                     {
-                        CourseId = int.Parse(course)
+                        Course = new CourseViewModel
+                        {
+                            CourseId = int.Parse(course)
+                        }
                     };
 
-                    newInstructor.CourseAssignments.Add(courseToAdd);
+                    ((IList<CourseAssignmentViewModel>)newInstructor.CourseAssignments).Add(courseToAdd);
                 }
             }
 
@@ -63,7 +68,16 @@ namespace ContosoUniversity.Pages.Instructors
                 i => i.HireDate,
                 i => i.OfficeAssignment))
             {
-                _context.Instructors.Add(newInstructor);
+                _context.Instructors.Add(new Instructor()
+                {
+                    FirstMidName = newInstructor.FirstMidName,
+                    LastName = newInstructor.LastName,
+                    HireDate = newInstructor.HireDate,
+                    OfficeAssignment = newInstructor.OfficeAssignment?.Location == null ? null : new OfficeAssignment
+                    {
+                        Location = newInstructor.OfficeAssignment.Location
+                    }
+                });
                 await _context.SaveChangesAsync();
 
                 return RedirectToPage("./Index");

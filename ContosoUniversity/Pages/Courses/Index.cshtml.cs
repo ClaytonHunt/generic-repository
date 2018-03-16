@@ -26,9 +26,15 @@ namespace ContosoUniversity.Pages.Courses
                     CourseId = c.CourseId,
                     Title = c.Title,
                     Credits = c.Credits,
-                    DepartmentName = c.Department.Name
+                    Department = c.Department == null ? null : new DepartmentViewModel
+                    {
+                        Id = c.Department.DepartmentId,
+                        Name = c.Department.Name
+                    }
                 })
                 .ToListAsync();
+
+            return;
         }
     }
 }

@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using ContosoUniversity.Data;
-using ContosoUniversity.Models;
 
 namespace ContosoUniversity.Pages.Departments
 {
@@ -19,12 +16,24 @@ namespace ContosoUniversity.Pages.Departments
             _context = context;
         }
 
-        public IList<Department> Department { get;set; }
+        public IList<DepartmentViewModel> Department { get;set; }
 
         public async Task OnGetAsync()
         {
-            Department = await _context.Departments
-                .Include(d => d.Administrator).ToListAsync();
+            Department = await _context.Departments.Select(d => new DepartmentViewModel
+            {
+                Id = d.DepartmentId,
+                Name = d.Name,
+                Budget = d.Budget,
+                StartDate = d.StartDate,
+                Version = d.RowVersion[7],
+                Administrator = d.Administrator == null ? null : new InstructorViewModel
+                {
+                    Id = d.Administrator.Id,
+                    FirstMidName = d.Administrator.FirstMidName,
+                    LastName = d.Administrator.LastName                    
+                }
+            }).ToListAsync();
         }
     }
 }

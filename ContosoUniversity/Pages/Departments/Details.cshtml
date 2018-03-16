@@ -30,10 +30,10 @@
             @Html.DisplayFor(model => model.Department.StartDate)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Department.RowVersion)
+            @Html.DisplayNameFor(model => model.Department.Version)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Department.RowVersion)
+            @Html.DisplayFor(model => model.Department.Version)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Department.Administrator)
@@ -44,6 +44,6 @@
     </dl>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Department.DepartmentId">Edit</a> |
+    <a asp-page="./Edit" asp-route-id="@Model.Department.Id">Edit</a> |
     <a asp-page="./Index">Back to List</a>
 </div>

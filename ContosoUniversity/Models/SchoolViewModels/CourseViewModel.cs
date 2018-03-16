@@ -7,7 +7,7 @@ namespace ContosoUniversity.Models.SchoolViewModels
         public int CourseId { get; set; }
         public string Title { get; set; }
         public int Credits { get; set; }
-        public string DepartmentName { get; set; }
         public IEnumerable<EnrollmentViewModel> Enrollments { get; set; }
+        public DepartmentViewModel Department { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,7 +23,7 @@ namespace ContosoUniversity.Pages.Courses
         }
 
         [BindProperty]
-        public Course Course { get; set; }
+        public CourseViewModel Course { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -31,26 +32,18 @@ namespace ContosoUniversity.Pages.Courses
                 return Page();
             }
 
-            var emptyCourse = new Course();
-
-            if (await TryUpdateModelAsync<Course>(
-                emptyCourse,
-                "course",
-                s => s.CourseId,
-                s => s.DepartmentId,
-                s => s.Title,
-                s => s.Credits))
+            var courseToCreate = new Course
             {
-                _context.Courses.Add(emptyCourse);
-                await _context.SaveChangesAsync();
+                CourseId = Course.CourseId,
+                DepartmentId = Course.Department.Id,
+                Title = Course.Title,
+                Credits = Course.Credits
+            };
 
-                return RedirectToPage("./Index");
-            }
+            _context.Courses.Add(courseToCreate);
+            await _context.SaveChangesAsync();
 
-            // Select DepartmentId if TryUpdateModelAsync fails.
-            PopulateDepartmentsDropDownList(_context, emptyCourse.DepartmentId);
-
-            return Page();
+            return RedirectToPage("./Index");
         }
     }
 }

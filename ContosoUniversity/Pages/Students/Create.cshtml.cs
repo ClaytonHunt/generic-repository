@@ -31,9 +31,14 @@ namespace ContosoUniversity.Pages.Students
                 return Page();
             }
 
-            var entry = _context.Add(new Student());
-            entry.CurrentValues.SetValues(Student);
+            var studentToCreate = new Student
+            {
+                FirstMidName = Student.FirstMidName,
+                LastName = Student.LastName,
+                EnrollmentDate = Student.EnrollmentDate
+            };
 
+            _context.Add(studentToCreate);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,7 +18,7 @@ namespace ContosoUniversity.Pages.Courses
         }
 
         [BindProperty]
-        public Course Course { get; set; }
+        public CourseViewModel Course { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -27,8 +27,24 @@ namespace ContosoUniversity.Pages.Courses
                 return NotFound();
             }
 
-            Course = await _context.Courses
-                .Include(c => c.Department).FirstOrDefaultAsync(m => m.CourseId == id);
+            Course = await _context.Courses.Select(c => new CourseViewModel
+                {
+                    CourseId = c.CourseId,
+                    Credits = c.Credits,
+                    Title = c.Title,
+                    Department = new DepartmentViewModel
+                    {
+                        Id = c.Department.DepartmentId,
+                        Name = c.Department.Name                        
+                    },
+                    Enrollments = c.Enrollments.Select(e => new EnrollmentViewModel
+                    {
+                        Grade = e.Grade,
+                        StudentName = e.Student.FullName,
+                        CourseTitle = c.Title
+                    })
+                })
+                .FirstOrDefaultAsync(m => m.CourseId == id);
 
             if (Course == null)
             {
@@ -36,7 +52,7 @@ namespace ContosoUniversity.Pages.Courses
             }
 
             // Select current DepartmentId
-            PopulateDepartmentsDropDownList(_context, Course.DepartmentId);
+            PopulateDepartmentsDropDownList(_context, Course.Department.Id);
 
             return Page();
         }
@@ -66,11 +82,6 @@ namespace ContosoUniversity.Pages.Courses
             PopulateDepartmentsDropDownList(_context, courseToUpdate.DepartmentId);
 
             return Page();
-        }
-
-        private bool CourseExists(int id)
-        {
-            return _context.Courses.Any(e => e.CourseId == id);
         }
     }
 }

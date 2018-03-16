@@ -3,6 +3,8 @@ using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Linq;
+using ContosoUniversity.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.Pages.Instructors
 {
@@ -29,18 +31,18 @@ namespace ContosoUniversity.Pages.Instructors
             }
         }
 
-        public void UpdateInstructorCourses(SchoolContext context,
-            string[] selectedCourses, InstructorViewModel instructorToUpdate)
+        public async void UpdateInstructorCourses(SchoolContext context,
+            string[] selectedCourses, Instructor instructorToUpdate)
         {
             if (selectedCourses == null)
             {
-                instructorToUpdate.CourseAssignments = new List<CourseAssignmentViewModel>();
+                instructorToUpdate.CourseAssignments = new List<CourseAssignment>();
                 return;
             }
 
             var selectedCoursesHS = new HashSet<string>(selectedCourses);
             var instructorCourses = new HashSet<int>
-                (instructorToUpdate.CourseAssignments.Select(c => c.Course.CourseId));
+                (instructorToUpdate.CourseAssignments.Select(c => c.CourseId));
 
             foreach (var course in context.Courses.Select(c => new CourseViewModel
             {
@@ -48,12 +50,17 @@ namespace ContosoUniversity.Pages.Instructors
                 Title = c.Title,
                 Enrollments = c.Enrollments.Select(e => new EnrollmentViewModel
                 {
+                    Id = e.EnrollmentId,
                     Grade = e.Grade,
                     StudentName = e.Student.FullName,
                     CourseTitle = e.Course.Title
                 }),
                 Credits = c.Credits,
-                DepartmentName = c.Department.Name
+                Department = new DepartmentViewModel
+                {
+                    Id = c.Department.DepartmentId,
+                    Name = c.Department.Name
+                },
             }))
             {
                 if (selectedCoursesHS.Contains(course.CourseId.ToString()))
@@ -61,10 +68,10 @@ namespace ContosoUniversity.Pages.Instructors
                     if (!instructorCourses.Contains(course.CourseId))
                     {
                         instructorToUpdate.CourseAssignments = instructorToUpdate.CourseAssignments.ToList();
-                        ((IList<CourseAssignmentViewModel>)instructorToUpdate.CourseAssignments).Add(new CourseAssignmentViewModel
+                        ((IList<CourseAssignment>)instructorToUpdate.CourseAssignments).Add(new CourseAssignment
                         {
                             Instructor = instructorToUpdate,
-                            Course = course
+                            CourseId = course.CourseId
                         });
                     }
                 }
@@ -72,12 +79,12 @@ namespace ContosoUniversity.Pages.Instructors
                 {
                     if (instructorCourses.Contains(course.CourseId))
                     {
-                        var courseToRemove
-                            = instructorToUpdate
-                                .CourseAssignments
-                                .SingleOrDefault(i => i.Course.CourseId == course.CourseId);
+                        var courseToRemove = await context.Courses.FirstOrDefaultAsync(c => c.CourseId == course.CourseId);
 
-                        context.Remove(courseToRemove);
+                        if (courseToRemove != null)
+                        {
+                            context.Remove(courseToRemove);
+                        }                        
                     }
                 }
             }

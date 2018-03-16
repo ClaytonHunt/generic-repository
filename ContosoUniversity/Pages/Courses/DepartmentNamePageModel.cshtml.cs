@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using ContosoUniversity.Models.SchoolViewModels;
 
 namespace ContosoUniversity.Pages.Courses
 {
@@ -13,12 +14,15 @@ namespace ContosoUniversity.Pages.Courses
         public void PopulateDepartmentsDropDownList(SchoolContext context,
             object selectedDepartment = null)
         {
-            var departmentsQuery = from d in context.Departments
-                orderby d.Name // Sort by name.
-                select d;
+            var departmentsQuery = context.Departments.Select(d => new DepartmentViewModel
+            {
+                Id = d.DepartmentId,
+                Name = d.Name
+            }).OrderBy(d => d.Name);
+                
 
-            DepartmentName = new SelectList(departmentsQuery.AsNoTracking(),
-                "DepartmentId", "Name", selectedDepartment);
+            DepartmentName = new SelectList(departmentsQuery,
+                "Id", "Name", selectedDepartment);
         }
     }
 }
