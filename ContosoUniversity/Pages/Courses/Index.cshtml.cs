@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Models.SchoolViewModels;
+using ContosoUniversity.Pages.Instructors;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,21 +20,7 @@ namespace ContosoUniversity.Pages.Courses
 
         public async Task OnGetAsync()
         {
-            CourseVm = await _context.Courses
-                .Select(c => new CourseViewModel
-                {
-                    CourseId = c.CourseId,
-                    Title = c.Title,
-                    Credits = c.Credits,
-                    Department = c.Department == null ? null : new DepartmentViewModel
-                    {
-                        Id = c.Department.DepartmentId,
-                        Name = c.Department.Name
-                    }
-                })
-                .ToListAsync();
-
-            return;
+            CourseVm = await new CourseMapper().ManyTo(_context.Courses).ToListAsync();
         }
     }
 }

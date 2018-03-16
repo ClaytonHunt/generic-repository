@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Models.SchoolViewModels;
+using ContosoUniversity.Pages.Instructors;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,20 +20,7 @@ namespace ContosoUniversity.Pages.Departments
 
         public async Task OnGetAsync()
         {
-            Department = await _context.Departments.Select(d => new DepartmentViewModel
-            {
-                Id = d.DepartmentId,
-                Name = d.Name,
-                Budget = d.Budget,
-                StartDate = d.StartDate,
-                Version = d.RowVersion[7],
-                Administrator = d.Administrator == null ? null : new InstructorViewModel
-                {
-                    Id = d.Administrator.Id,
-                    FirstMidName = d.Administrator.FirstMidName,
-                    LastName = d.Administrator.LastName                    
-                }
-            }).ToListAsync();
+            Department = await new DepartmentMapper().ManyTo(_context.Departments).ToListAsync();
         }
     }
 }

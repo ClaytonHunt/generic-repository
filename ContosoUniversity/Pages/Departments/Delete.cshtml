@@ -33,12 +33,6 @@
             @Html.DisplayFor(model => model.Department.StartDate)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Department.Version)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Department.Version)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Department.Administrator)
         </dt>
         <dd>
@@ -48,7 +42,6 @@
     
     <form method="post">
         <input type="hidden" asp-for="Department.Id" />
-        <input type="hidden" asp-for="Department.Version" />
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-default" /> |
             <a asp-page="./Index">Back to List</a>

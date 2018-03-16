@@ -44,9 +44,9 @@ namespace ContosoUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            var departments = await _context.Departments.Where(d => d.InstructorId == id).ToListAsync();
-            departments.ForEach(d => d.InstructorId = null);
-            _context.Departments.UpdateRange(departments);
+            var departments = await new DepartmentMapper().ManyTo(_context.Departments.AsNoTracking().Where(d => d.InstructorId == id)).ToListAsync();
+            departments.ForEach(d => d.Administrator = null);
+            _context.Departments.UpdateRange(new DepartmentMapper().ManyFrom(departments));
 
             _context.Instructors.Remove(new InstructorMapper().SingleFrom(instructor));
 

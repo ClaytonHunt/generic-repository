@@ -22,9 +22,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Department[0].StartDate)
                 </th>
-                <th>
-                    RowVersion
-                </th>
             <th>
                 @Html.DisplayNameFor(model => model.Department[0].Administrator)
             </th>
@@ -42,9 +39,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @item.Version
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Administrator.FullName)

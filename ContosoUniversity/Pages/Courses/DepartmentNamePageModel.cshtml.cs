@@ -1,28 +1,27 @@
 ﻿using ContosoUniversity.Data;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using ContosoUniversity.Models.SchoolViewModels;
+using ContosoUniversity.Pages.Instructors;
 
 namespace ContosoUniversity.Pages.Courses
 {
     public class DepartmentNamePageModel : PageModel
     {
+        protected readonly ContosoUniversity.Data.SchoolContext Context;
+
+        public DepartmentNamePageModel(SchoolContext context)
+        {
+            Context = context;
+        }
+
         public SelectList DepartmentName { get; set; }
 
-        public void PopulateDepartmentsDropDownList(SchoolContext context,
-            object selectedDepartment = null)
+        public void PopulateDepartmentsDropDownList(object selectedDepartment = null)
         {
-            var departmentsQuery = context.Departments.Select(d => new DepartmentViewModel
-            {
-                Id = d.DepartmentId,
-                Name = d.Name
-            }).OrderBy(d => d.Name);
-                
+            var departmentsQuery = new DepartmentMapper().ManyTo(Context.Departments).OrderBy(d => d.Name);
 
-            DepartmentName = new SelectList(departmentsQuery,
-                "Id", "Name", selectedDepartment);
+            DepartmentName = new SelectList(departmentsQuery, "Id", "Name", selectedDepartment);
         }
     }
 }
