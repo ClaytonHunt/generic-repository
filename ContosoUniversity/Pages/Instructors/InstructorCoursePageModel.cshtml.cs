@@ -27,48 +27,5 @@ namespace ContosoUniversity.Pages.Instructors
                 });
             }
         }
-
-        public void UpdateInstructorCourses(IEnumerable<CourseViewModel> allCourses,
-            string[] selectedCourses, InstructorViewModel instructorToUpdate)
-        {
-            if (selectedCourses == null)
-            {
-                instructorToUpdate.CourseAssignments = new List<CourseAssignmentViewModel>();
-                return;
-            }
-
-            var selectedCoursesHS = new HashSet<string>(selectedCourses);
-            var instructorCourses = new HashSet<int>(instructorToUpdate.CourseAssignments.Select(c => c.Course.CourseId));
-
-            var a = instructorToUpdate.CourseAssignments.Count();
-
-            foreach (var course in allCourses)
-            {
-                if (selectedCoursesHS.Contains(course.CourseId.ToString()))
-                {
-                    if (!instructorCourses.Contains(course.CourseId))
-                    {
-                        instructorToUpdate.CourseAssignments = instructorToUpdate.CourseAssignments.ToList();
-                        ((IList<CourseAssignmentViewModel>)instructorToUpdate.CourseAssignments).Add(new CourseAssignmentViewModel
-                        {
-                            Instructor = instructorToUpdate,
-                            Course = course
-                        });
-                    }
-                }
-                else
-                {
-                    if (instructorCourses.Contains(course.CourseId))
-                    {
-                        var courseToRemove = instructorToUpdate.CourseAssignments.FirstOrDefault(c => c.Course.CourseId == course.CourseId);
-
-                        if (courseToRemove != null)
-                        {
-                            ((IList<CourseAssignmentViewModel>)instructorToUpdate.CourseAssignments).Remove(courseToRemove);
-                        }                        
-                    }
-                }
-            }
-        }
     }
 }

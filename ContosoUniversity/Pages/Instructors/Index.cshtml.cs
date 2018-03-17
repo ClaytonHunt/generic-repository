@@ -23,7 +23,7 @@ namespace ContosoUniversity.Pages.Instructors
         {
             Instructor = new InstructorIndexData
             {
-                Instructors = await new InstructorService(_context).GetAll()
+                Instructors = await new InstructorService(_context).GetAllAsync()
                     .OrderBy(i => i.LastName)
                     .ToListAsync()
             };
@@ -45,7 +45,7 @@ namespace ContosoUniversity.Pages.Instructors
 
             var selectedCourse = Instructor.Courses.Single(x => x.CourseId == courseId);
 
-            selectedCourse.Enrollments = await new EnrollmentService(_context).GetAllAsync(e => e.Where(x => x.CourseTitle == selectedCourse.Title));
+            selectedCourse.Enrollments = await new EnrollmentService(_context).GetAllAsync(e => e.Where(x => x.CourseId == selectedCourse.CourseId));
 
             Instructor.Enrollments = selectedCourse.Enrollments;
         }

@@ -42,14 +42,21 @@ namespace ContosoUniversity.Pages.Instructors
                         {
                             Name = ca.Course.Department.Name
                         },
+                        Enrollments = ca.Course.Enrollments == null ? ca.Course.Enrollments.Select(e => new EnrollmentViewModel
+                        {
+                            Id = e.EnrollmentId,
+                            Grade = e.Grade,
+                            CourseTitle = ca.Course.Title,
+                            StudentName = e.Student.FullName
+                        }) : null
                     }
                 })
             });
-        }        
+        }
 
         public Instructor SingleFrom(InstructorViewModel instructor)
         {
-            return  new Instructor
+            return new Instructor
             {
                 Id = instructor.Id,
                 FirstMidName = instructor.FirstMidName,
@@ -60,6 +67,6 @@ namespace ContosoUniversity.Pages.Instructors
                     Location = instructor.OfficeAssignment.Location
                 }
             };
-        }        
+        }
     }
 }

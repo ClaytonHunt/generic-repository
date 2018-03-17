@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -35,7 +32,7 @@ namespace ContosoUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            var allCourses = new CourseService(_context).GetAllAsync();
+            var allCourses = await new CourseService(_context).GetAllAsync();
 
             PopulateAssignedCourseData(allCourses, Instructor);
 
@@ -49,42 +46,9 @@ namespace ContosoUniversity.Pages.Instructors
                 return Page();
             }
 
-            var instructorToUpdate = await new InstructorMapper().ManyTo(_context.Instructors).FirstOrDefaultAsync(i => i.Id == id);           
-
-            if (string.IsNullOrWhiteSpace(instructorToUpdate.OfficeAssignment?.Location))
-            {
-                instructorToUpdate.OfficeAssignment = null;
-            }
-
-            var allCourses = new CourseMapper().ManyTo(_context.Courses);
-
-            UpdateInstructorCourses(allCourses, selectedCourses, instructorToUpdate);
-
-            instructorToUpdate.LastName = Instructor.LastName;
-            instructorToUpdate.FirstMidName = Instructor.FirstMidName;
-            instructorToUpdate.HireDate = Instructor.HireDate;
-            instructorToUpdate.OfficeAssignment = string.IsNullOrWhiteSpace(Instructor.OfficeAssignment.Location) ? null : Instructor.OfficeAssignment;
-
-            _context.Instructors.Update(new InstructorMapper().SingleFrom(instructorToUpdate));
-
-            await _context.SaveChangesAsync();
+            await new InstructorService(_context).UpdateAsync(Instructor, selectedCourses);
 
             return RedirectToPage("./Index");
-        }
-    }
-
-    public class CourseService
-    {
-        private readonly SchoolContext _context;
-
-        public CourseService(SchoolContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<IEnumerable<CourseViewModel>> GetAllAsync()
-        {
-            return await new CourseMapper().ManyTo(_context.Courses).ToListAsync();
         }
     }
 }

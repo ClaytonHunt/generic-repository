@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.Pages.Instructors
 {
@@ -24,12 +23,13 @@ namespace ContosoUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            Instructor = new InstructorMapper().SingleTo(await _context.Instructors.FirstOrDefaultAsync(m => m.Id == id));
+            Instructor = await new InstructorService(_context).GetByIdAsync(id.Value);
 
             if (Instructor == null)
             {
                 return NotFound();
             }
+
             return Page();
         }
     }

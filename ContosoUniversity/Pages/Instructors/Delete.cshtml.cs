@@ -26,32 +26,27 @@ namespace ContosoUniversity.Pages.Instructors
                 return NotFound();
             }
 
-            Instructor = new InstructorMapper().SingleTo(await _context.Instructors.FirstOrDefaultAsync(m => m.Id == id));
+            Instructor = await new InstructorService(_context).GetByIdAsync(id.Value);
 
             if (Instructor == null)
             {
                 return NotFound();
             }
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            var instructor = new InstructorMapper().SingleTo(await _context.Instructors.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id));
+            var instructor = await new InstructorService(_context).GetByIdAsync(id);
 
             if (instructor == null)
             {
                 return NotFound();
             }
 
-            var departments = await new DepartmentMapper().ManyTo(_context.Departments.AsNoTracking().Where(d => d.InstructorId == id)).ToListAsync();
-            departments.ForEach(d => d.Administrator = null);
-            _context.Departments.UpdateRange(new DepartmentMapper().ManyFrom(departments));
-
-            _context.Instructors.Remove(new InstructorMapper().SingleFrom(instructor));
-
-            await _context.SaveChangesAsync();
-
+            await new InstructorService(_context).Delete(instructor);
+            
             return RedirectToPage("./Index");
         }
     }

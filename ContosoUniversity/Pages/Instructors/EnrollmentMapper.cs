@@ -18,7 +18,9 @@ namespace ContosoUniversity.Pages.Instructors
             return enrollments.Select(e => new EnrollmentViewModel
             {
                 StudentName = e.Student.FullName,
-                Grade = e.Grade
+                Grade = e.Grade,
+                CourseId = e.CourseId,
+                CourseTitle = e.Course.Title
             });
         }
 

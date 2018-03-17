@@ -16,14 +16,14 @@ namespace ContosoUniversity.Pages.Instructors
             _context = context;
         }
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGet()
         {
             var instructor = new InstructorViewModel
             {
                 CourseAssignments = new List<CourseAssignmentViewModel>()
             };
 
-            var allCourses = new CourseMapper().ManyTo(_context.Courses);
+            var allCourses = await new CourseService(_context).GetAllAsync();
 
             // Provides an empty collection for the foreach loop
             // foreach (var course in Model.AssignedCourseDataList)
@@ -43,10 +43,10 @@ namespace ContosoUniversity.Pages.Instructors
                 return Page();
             }
 
-            var newInstructor = new InstructorViewModel();
-
-            if (selectedCourses != null)
+           if (selectedCourses != null)
             {
+                Instructor.CourseAssignments = new List<CourseAssignmentViewModel>();
+
                 foreach (var course in selectedCourses)
                 {
                     var courseToAdd = new CourseAssignmentViewModel
@@ -57,13 +57,11 @@ namespace ContosoUniversity.Pages.Instructors
                         }
                     };
 
-                    ((IList<CourseAssignmentViewModel>)newInstructor.CourseAssignments).Add(courseToAdd);
+                    ((IList<CourseAssignmentViewModel>)Instructor.CourseAssignments).Add(courseToAdd);
                 }
             }
 
-            _context.Instructors.Add(new InstructorMapper().SingleFrom(Instructor));
-
-            await _context.SaveChangesAsync();
+            await new InstructorService(_context).CreateAsync(Instructor);
 
             return RedirectToPage("./Index");
         }
