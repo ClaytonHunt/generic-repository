@@ -8,11 +8,11 @@ namespace ContosoUniversity.Pages.Students
 {
     public class EditModel : PageModel
     {
-        private readonly SchoolContext _context;
+        private readonly StudentService _service;
 
-        public EditModel(SchoolContext context)
+        public EditModel(StudentService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
@@ -25,7 +25,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await new StudentService(_context).GetByIdAsync(id.Value);
+            Student = await _service.GetByIdAsync(id.Value);
 
             if (Student == null)
             {
@@ -42,7 +42,7 @@ namespace ContosoUniversity.Pages.Students
                 return Page();
             }
 
-            await new StudentService(_context).UpdateAsync(Student);
+            await _service.UpdateAsync(Student);
             
             return RedirectToPage("./Index");
         }

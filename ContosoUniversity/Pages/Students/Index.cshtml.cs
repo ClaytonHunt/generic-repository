@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,16 +8,15 @@ namespace ContosoUniversity.Pages.Students
 {
     public class IndexModel : PageModel
     {
-        private readonly SchoolContext _context;
-
+        private readonly StudentService _service;
         public string NameSort { get; set; }
         public string DateSort { get; set; }
         public string CurrentFilter { get; set; }
         public string CurrentSort { get; set; }
 
-        public IndexModel(SchoolContext context)
+        public IndexModel(StudentService service)
         {
-            _context = context;
+            _service = service;
         }
 
         public PaginatedList<StudentViewModel> Student { get; set; }
@@ -41,7 +39,7 @@ namespace ContosoUniversity.Pages.Students
             const int pageSize = 3;
 
 
-            Student = await new StudentService(_context).GetAllPagedAsync(
+            Student = await _service.GetAllPagedAsync(
                 searchString, OrderedBy(sortOrder), pageIndex, pageSize);
         }
 

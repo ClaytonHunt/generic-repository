@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -9,11 +8,11 @@ namespace ContosoUniversity.Pages.Students
 {
     public class DeleteModel : PageModel
     {
-        private readonly SchoolContext _context;
+        private readonly StudentService _service;
 
-        public DeleteModel(SchoolContext context)
+        public DeleteModel(StudentService service)
         {
-            _context = context;
+            _service = service;
         }
 
         [BindProperty]
@@ -27,7 +26,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await new StudentService(_context).GetByIdAsync(id.Value);
+            Student = await _service.GetByIdAsync(id.Value);
 
             if (Student == null)
             {
@@ -44,7 +43,7 @@ namespace ContosoUniversity.Pages.Students
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            var student = await new StudentService(_context).GetByIdAsync(id);
+            var student = await _service.GetByIdAsync(id);
 
             if (student == null)
             {
@@ -53,7 +52,7 @@ namespace ContosoUniversity.Pages.Students
 
             try
             {
-                await new StudentService(_context).DeleteAsync(student);
+                await _service.DeleteAsync(student);
 
                 return RedirectToPage("./Index");
             }

@@ -1,4 +1,5 @@
 using ContosoUniversity.Data;
+using ContosoUniversity.Pages.Students;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -20,8 +21,12 @@ namespace ContosoUniversity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SchoolContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-    
+            
             services.AddMvc();
+
+            services.AddScoped<StudentMapper, StudentMapper>();
+            services.AddScoped<StudentService, StudentService>();
+            services.AddScoped<StudentRepository, StudentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

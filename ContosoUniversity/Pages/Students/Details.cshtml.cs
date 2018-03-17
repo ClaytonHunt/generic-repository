@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using ContosoUniversity.Data;
 using ContosoUniversity.Models.SchoolViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,11 +7,11 @@ namespace ContosoUniversity.Pages.Students
 {
     public class DetailsModel : PageModel
     {
-        private readonly SchoolContext _context;
+        private readonly StudentService _service;
 
-        public DetailsModel(SchoolContext context)
+        public DetailsModel(StudentService service)
         {
-            _context = context;
+            _service = service;
         }
 
         public StudentViewModel Student { get; set; }
@@ -24,7 +23,7 @@ namespace ContosoUniversity.Pages.Students
                 return NotFound();
             }
 
-            Student = await new StudentService(_context).GetByIdAsync(id.Value);
+            Student = await _service.GetByIdAsync(id.Value);
 
             if (Student == null)
             {
