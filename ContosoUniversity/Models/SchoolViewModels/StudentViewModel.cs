@@ -6,7 +6,7 @@ using ContosoUniversity.Pages.Students;
 
 namespace ContosoUniversity.Models.SchoolViewModels
 {
-    public class StudentViewModel
+    public class StudentViewModel : IStandardIdentity
     {
         public int Id { get; set; }
 

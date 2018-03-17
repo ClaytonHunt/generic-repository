@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using ContosoUniversity.Models;
 using ContosoUniversity.Models.SchoolViewModels;
 
 namespace ContosoUniversity.Pages.Students
 {
-    public class StudentMapper
+    public class StudentMapper : IMapper<StudentViewModel, Student>
     {
-        public StudentViewModel SingleTo(Student student)
+        public StudentViewModel SingleTo(Student item)
         {
             return new StudentViewModel
             {
-                Id = student.Id,
-                LastName = student.LastName,
-                FirstMidName = student.FirstMidName,
-                EnrollmentDate = student.EnrollmentDate
+                Id = item.Id,
+                LastName = item.LastName,
+                FirstMidName = item.FirstMidName,
+                EnrollmentDate = item.EnrollmentDate
             };
         }
 
-        public IQueryable<StudentViewModel> ManyTo(IQueryable<Student> students)
+        public IQueryable<StudentViewModel> ManyTo(IQueryable<Student> items)
         {
-            return students.Select(student => new StudentViewModel
+            return items.Select(student => new StudentViewModel
             {
                 Id = student.Id,
                 LastName = student.LastName,
@@ -36,14 +33,14 @@ namespace ContosoUniversity.Pages.Students
             });
         }        
 
-        public Student SingleFrom(StudentViewModel student)
+        public Student SingleFrom(StudentViewModel item)
         {
             return new Student
             {
-                Id = student.Id,
-                FirstMidName = student.FirstMidName,
-                LastName = student.LastName,
-                EnrollmentDate = student.EnrollmentDate
+                Id = item.Id,
+                FirstMidName = item.FirstMidName,
+                LastName = item.LastName,
+                EnrollmentDate = item.EnrollmentDate
             };
         }        
     }

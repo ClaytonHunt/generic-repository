@@ -1,4 +1,6 @@
 using ContosoUniversity.Data;
+using ContosoUniversity.Models;
+using ContosoUniversity.Models.SchoolViewModels;
 using ContosoUniversity.Pages.Students;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,9 +26,10 @@ namespace ContosoUniversity
             
             services.AddMvc();
 
-            services.AddScoped<StudentMapper, StudentMapper>();
+            services.AddScoped<DbContext, SchoolContext>();
             services.AddScoped<StudentService, StudentService>();
-            services.AddScoped<StudentRepository, StudentRepository>();
+            services.AddScoped<IMapper<StudentViewModel, Student>, StudentMapper>();
+            services.AddScoped<IRepository<StudentViewModel>, GenericRepository<StudentViewModel, Student>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

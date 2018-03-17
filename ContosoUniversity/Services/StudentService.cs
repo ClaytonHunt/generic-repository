@@ -7,9 +7,9 @@ namespace ContosoUniversity.Pages.Students
 {
     public class StudentService
     {
-        private readonly StudentRepository _repository;
+        private readonly IRepository<StudentViewModel> _repository;
 
-        public StudentService(StudentRepository repository)
+        public StudentService(IRepository<StudentViewModel> repository)
         {
             _repository = repository;
         }
