@@ -9,9 +9,9 @@ namespace ContosoUniversity.Pages.Instructors
 {
     public class CreateModel : InstructorCoursesPageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
-        public CreateModel(ContosoUniversity.Data.SchoolContext context)
+        public CreateModel(Data.SchoolContext context)
         {
             _context = context;
         }

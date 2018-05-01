@@ -9,11 +9,11 @@ namespace ContosoUniversity.Pages.Departments
 {
     public class CreateModel : PageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
         public SelectList Instructors { get; set; }
 
-        public CreateModel(ContosoUniversity.Data.SchoolContext context)
+        public CreateModel(Data.SchoolContext context)
         {
             _context = context;
         }

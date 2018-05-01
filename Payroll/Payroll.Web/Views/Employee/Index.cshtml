@@ -1,0 +1,17 @@
+﻿@model Payroll.Business.Models.Employee
+@using Payroll.Business.Models
+
+@{
+    ViewBag.Title = "Add Employee";
+    Layout = "_Layout";
+}
+
+<h2><a href="/"><i class="glyphicon glyphicon-arrow-left"></i>New Employee</a></h2>
+
+<form asp-controller="Employee" asp-action="Create" method="post">
+    SSN:  <input asp-for="SSN" /> <br />
+    FirstName: <input asp-for="FirstName" /><br />
+    LastName: <input asp-for="LastName" /><br />
+    Type: <select asp-for="Type" asp-items="Html.GetEnumSelectList<EmployeeType>()"></select>
+    <button type="submit">Create</button>
+</form>

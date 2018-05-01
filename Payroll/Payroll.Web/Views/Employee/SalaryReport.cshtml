@@ -1,0 +1,35 @@
+﻿@model Payroll.Business.Models.SalaryEmployee
+
+@{
+    ViewBag.Title = "Salary Employee Report";
+    Layout = "_Layout";
+}
+
+<h2><a href="/"><i class="glyphicon glyphicon-arrow-left"></i></a>@Model.FirstName @Model.LastName</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            SSN: @Model.SSN
+        </div>
+        <div class="row">
+            First Name: @Model.FirstName
+        </div>
+        <div class="row">
+            Last Name: @Model.LastName
+        </div>
+        <div class="row">
+            Employee Type: @Model.Type
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            Annual Salary: @string.Format("{0:C}", Model.Salary)
+        </div>
+        <div class="row">
+            Bi-Weekly Pay: @string.Format("{0:C}", Model.PeriodPay)
+        </div>
+        <div class="row">
+            Total Pay to Date: @string.Format("{0:C}", Model.TotalPayToDate)
+        </div>
+    </div>
+</div>

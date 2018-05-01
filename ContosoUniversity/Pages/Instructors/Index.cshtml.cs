@@ -8,9 +8,9 @@ namespace ContosoUniversity.Pages.Instructors
 {
     public class IndexModel : PageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
-        public IndexModel(ContosoUniversity.Data.SchoolContext context)
+        public IndexModel(Data.SchoolContext context)
         {
             _context = context;
         }

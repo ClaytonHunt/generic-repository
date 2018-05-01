@@ -8,9 +8,9 @@ namespace ContosoUniversity.Pages.Instructors
 {
     public class EditModel : InstructorCoursesPageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
-        public EditModel(ContosoUniversity.Data.SchoolContext context)
+        public EditModel(Data.SchoolContext context)
         {
             _context = context;
         }

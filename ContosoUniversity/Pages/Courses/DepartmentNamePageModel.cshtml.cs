@@ -8,7 +8,7 @@ namespace ContosoUniversity.Pages.Courses
 {
     public class DepartmentNamePageModel : PageModel
     {
-        protected readonly ContosoUniversity.Data.SchoolContext Context;
+        protected readonly SchoolContext Context;
 
         public DepartmentNamePageModel(SchoolContext context)
         {

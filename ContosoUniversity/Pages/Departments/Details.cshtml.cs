@@ -9,9 +9,9 @@ namespace ContosoUniversity.Pages.Departments
 {
     public class DetailsModel : PageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
-        public DetailsModel(ContosoUniversity.Data.SchoolContext context)
+        public DetailsModel(Data.SchoolContext context)
         {
             _context = context;
         }

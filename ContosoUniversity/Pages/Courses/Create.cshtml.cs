@@ -9,7 +9,7 @@ namespace ContosoUniversity.Pages.Courses
 {
     public class CreateModel : DepartmentNamePageModel
     {
-        public CreateModel(ContosoUniversity.Data.SchoolContext context) : base(context)
+        public CreateModel(Data.SchoolContext context) : base(context)
         {
 
         }

@@ -13,9 +13,9 @@ namespace ContosoUniversity.Pages.Departments
 {
     public class EditModel : PageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
-        public EditModel(ContosoUniversity.Data.SchoolContext context)
+        public EditModel(Data.SchoolContext context)
         {
             _context = context;
         }

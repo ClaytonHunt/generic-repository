@@ -10,9 +10,9 @@ namespace ContosoUniversity.Pages.Departments
 {
     public class DeleteModel : PageModel
     {
-        private readonly ContosoUniversity.Data.SchoolContext _context;
+        private readonly Data.SchoolContext _context;
 
-        public DeleteModel(ContosoUniversity.Data.SchoolContext context)
+        public DeleteModel(Data.SchoolContext context)
         {
             _context = context;
         }

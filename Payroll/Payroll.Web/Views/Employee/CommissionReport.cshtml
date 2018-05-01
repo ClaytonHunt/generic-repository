@@ -1,0 +1,60 @@
+﻿@model Payroll.Business.Models.CommissionEmployee
+
+@{
+    ViewBag.Title = "Commission Employee Report";
+    Layout = "_Layout";
+}
+
+<h2><a href="/"><i class="glyphicon glyphicon-arrow-left"></i></a>@Model.FirstName @Model.LastName</h2>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row">
+            SSN: @Model.SSN
+        </div>
+        <div class="row">
+            First Name: @Model.FirstName
+        </div>
+        <div class="row">
+            Last Name: @Model.LastName
+        </div>
+        <div class="row">
+            Employee Type: @Model.Type
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            Annual Salary: @string.Format("{0:C}", Model.Salary)
+        </div>
+        <div class="row">
+            Bi-Weekly Pay: @string.Format("{0:C}", Model.PeriodPay)
+        </div>
+        <div class="row">
+            Commission Rate: @string.Format("{0:P}", Model.Commission)
+        </div>
+        <div class="row">
+            Commission Pay To Date: @string.Format("{0:C}", Model.CommissionPay)
+        </div>
+        <div class="row">
+            Total Pay to Date: @string.Format("{0:C}", Model.TotalPayToDate)
+        </div>
+        <div class="row">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Sale</th>
+                    <th scope="col">Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var sale in Model.Sales)
+                {
+                    <tr>
+                        <td>@sale.Date.ToShortDateString()</td>
+                        <td>@string.Format("{0:C}", sale.Earnings)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

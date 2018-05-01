@@ -11,7 +11,7 @@ namespace ContosoUniversity.Pages.Courses
 {
     public class EditModel : DepartmentNamePageModel
     {
-        public EditModel(ContosoUniversity.Data.SchoolContext context) : base(context)
+        public EditModel(Data.SchoolContext context) : base(context)
         {
             
         }

@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Payroll.Web.Controllers.SimpleEmployeeViewModel>
+@{
+    ViewData["Title"] = "Home Page";  
+}
+
+<h2><a href="/employee"><i class="glyphicon glyphicon-plus"></i>Add a new Employee</a></h2>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th scope="col">SSN</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td scope="row">@Html.ActionLink(employee.SSN, "view", "employee", new { id = employee.Id }, null)</td>
+                <td>@employee.Name</td>
+                <td>@employee.Type</td>
+            </tr>
+        }
+    </tbody>
+</table>
