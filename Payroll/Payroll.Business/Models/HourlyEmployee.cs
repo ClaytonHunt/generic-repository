@@ -8,7 +8,7 @@ namespace Payroll.Business.Models
     {
         public decimal Rate { get; set; }        
 
-        public decimal TotalPayToDate => Rate * (decimal) TimeEntries.Select(x => x.Hours).Aggregate((a, b) => a + b);
+        public decimal TotalPayToDate => Rate * (decimal) TimeEntries.Select(x => x.Hours).Aggregate(0d, (a, b) => a + b);
 
         public IEnumerable<TimeEntry> TimeEntries { get; set; }
 

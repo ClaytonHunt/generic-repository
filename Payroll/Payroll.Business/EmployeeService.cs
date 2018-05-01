@@ -26,5 +26,10 @@ namespace Payroll.Business
 
             return emp;
         }
+
+        public async Task<IPaginatedList<Employee>> GetAll(int page)
+        {
+            return await _employeeRepo.GetAllPagedAsync((e) => e, page, 10);
+        }
     }
 }

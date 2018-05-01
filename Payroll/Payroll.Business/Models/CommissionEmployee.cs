@@ -10,7 +10,7 @@ namespace Payroll.Business.Models
 
         public decimal PeriodPay => (Salary / 52) * 2;
 
-        public decimal CommissionPay => Sales.Select(x => x.Earnings).Aggregate((a, b) => a + b) * (decimal) Commission;
+        public decimal CommissionPay => (decimal) (Sales.Select(x => x.Earnings).Aggregate(0f, (a, b) => a + (float) b) * (double) Commission);
 
         public decimal TotalPayToDate
         {
